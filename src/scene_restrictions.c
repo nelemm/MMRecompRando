@@ -114,3 +114,24 @@ RECOMP_PATCH void Interface_SetSceneRestrictions(PlayState* play) {
             break;
     }
 }
+// local patch: lock Better Double SoT's hour cursor during the final hours (day 3, 0:00-6:00).
+// Choosing an hour there crashed the game (reproduced, also without the 3DS Clock mod). Without
+// modifying Better Double SoT, the left/right inputs it reads (stick X, D-pad left/right, Z/R)
+// are neutralised while its hour choice is open, so the cursor stays on the hour it proposes
+// first (the next full hour). Up/down and A/B stay usable to answer Yes/No.
+RECOMP_HOOK("Play_Update")
+void Rando_LockDoubleTimeCursorInFinalHours(PlayState* play) {
+    if ((CURRENT_DAY != 3) || ((u16)gSaveContext.save.time >= CLOCK_TIME(6, 0))) {
+        return;
+    }
+    if (play->msgCtx.ocarinaMode != OCARINA_MODE_PROCESS_DOUBLE_TIME) {
+        return;
+    }
+    Input* input = &play->state.input[0];
+    const u16 lockedButtons = BTN_DLEFT | BTN_DRIGHT | BTN_Z | BTN_R;
+    input->cur.stick_x = 0;
+    input->rel.stick_x = 0;
+    input->cur.button &= (u16)~lockedButtons;
+    input->press.button &= (u16)~lockedButtons;
+    input->rel.button &= (u16)~lockedButtons;
+}
