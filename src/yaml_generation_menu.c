@@ -210,7 +210,7 @@ void randoYAMLExportCallback(RecompuiResource button, const RecompuiEventData* d
 
         REPY_FN_EVAL_CACHE_STR(
             py_rando_create_yaml_export_notification,
-            "f'Wrote YAML file to {recomp_data.last_generated_yaml_location}.'",
+            "f'Fichier YAML écrit dans {recomp_data.last_generated_yaml_location}.'",
             output_dir
         );
         
@@ -660,7 +660,7 @@ void randoCreateSearchSection(RandoYamlConfigMenu* menu, RandoListOption* list) 
     RecompuiResource input = recompui_create_textinput(menu->context, search_row);
     recompui_set_flex_grow(input, 1.0f);
 
-    RecompuiResource search_button = recompui_create_button(menu->context, search_row, "Search", BUTTONSTYLE_SECONDARY);
+    RecompuiResource search_button = recompui_create_button(menu->context, search_row, "Rechercher", BUTTONSTYLE_SECONDARY);
     recompui_register_callback(search_button, randoListSearchCallback, list);
 
     // Inner scrolling body for the entries. Mirrors the solo menu's
@@ -764,14 +764,14 @@ void randoCreateYamlConfigMenu() {
     recompui_set_justify_content(header_top, JUSTIFY_CONTENT_SPACE_EVENLY);
     recompui_set_align_items(header_top, ALIGN_ITEMS_CENTER);
 
-    yaml_config_menu.header_label = recompui_create_label(yaml_config_menu.context, header_top, "Randomizer Settings", LABELSTYLE_LARGE);
+    yaml_config_menu.header_label = recompui_create_label(yaml_config_menu.context, header_top, "Réglages du randomizer", LABELSTYLE_LARGE);
     recompui_set_text_align(yaml_config_menu.header_label, TEXT_ALIGN_CENTER);
 
-    yaml_config_menu.export_button = recompui_create_button(yaml_config_menu.context, header_top, "Export Yaml", BUTTONSTYLE_PRIMARY);
+    yaml_config_menu.export_button = recompui_create_button(yaml_config_menu.context, header_top, "Exporter le YAML", BUTTONSTYLE_PRIMARY);
     recompui_register_callback(yaml_config_menu.export_button, randoYAMLExportCallback, &yaml_config_menu);
     recompui_set_margin_right(yaml_config_menu.export_button, 12.0f, UNIT_DP);
 
-    yaml_config_menu.generate_button = recompui_create_button(yaml_config_menu.context, header_top, "Generate", BUTTONSTYLE_PRIMARY);
+    yaml_config_menu.generate_button = recompui_create_button(yaml_config_menu.context, header_top, "Générer", BUTTONSTYLE_PRIMARY);
     recompui_register_callback(yaml_config_menu.generate_button, randoYAMLGenerateCallback, &yaml_config_menu);
 
     // Second row: tab bar spanning the full header width.
@@ -811,6 +811,8 @@ void randoCreateYamlConfigMenu() {
     recompui_set_border_left_width(yaml_config_menu.description_pane, 1.1f, UNIT_DP);
     recompui_set_border_color(yaml_config_menu.description_pane, &pane_divider_color);
     recompui_set_font_size(yaml_config_menu.description_pane, 18.0f, UNIT_DP);
+    // local patch: keep long descriptions inside the pane
+    recompui_set_overflow_y(yaml_config_menu.description_pane, OVERFLOW_AUTO);
 
     yaml_config_menu.num_options = 0;
     yaml_config_menu.num_tabs = 0;
@@ -821,19 +823,28 @@ void randoCreateYamlConfigMenu() {
 
     REPY_FN_SETUP_RANDO;
 
+    // local patch: French display texts for the options (names, descriptions, choices, groups).
+    // Only display strings change; option ids and choice values written to the YAML are untouched.
+    REPY_FN_EXEC_CACHE(
+        py_rando_translate_options_fr,
+        "from worlds.mm_recomp import rando_fr\n"
+        "recomp_data.group_display = rando_fr.translate_options(recomp_data.options)\n"
+    );
+
     // General tab.
-    randoBeginTab(&yaml_config_menu, "General");
+    randoBeginTab(&yaml_config_menu, "Général");
 
     REPY_FN_FOREACH_CACHE(py_rando_fill_options_from_group, "option_group", "recomp_data.options.items()") {
         REPY_FN_EXEC_CACHE(
             py_rando_grab_option_groups,
             "option_group_name, options = option_group\n"
+            "option_group_display = getattr(recomp_data, 'group_display', {}).get(option_group_name, option_group_name)\n"
         );
 
         // only separate options into sections if there's more than the default "Game Options" and "Item & Location Options" group
         REPY_FN_IF_CACHE(py_rando_option_groups_actually_exist, "len(recomp_data.options) > 2 and option_group_name != 'Item & Location Options'") {
             char* option_group_name;
-            option_group_name = REPY_FN_GET_STR("option_group_name");
+            option_group_name = REPY_FN_GET_STR("option_group_display");
             randoBeginSection(&yaml_config_menu, option_group_name);
             recomp_free(option_group_name);
         }
@@ -876,7 +887,7 @@ void randoCreateYamlConfigMenu() {
                     REPY_FN_EXEC_CACHE(
                         py_rando_get_choice_option_names,
                         "choice_id = choice[0]\n"
-                        "choice_name = choice_id.replace('_', ' ').title()\n" // the .title() part is a bit redundant since its displayed in all caps
+                        "choice_name = option_info.get('choice_names', {}).get(choice_id) or choice_id.replace('_', ' ').title()\n" // the .title() part is a bit redundant since its displayed in all caps
                     );
 
                     // these get freed in the randoCreateRadioOption function (hopefully)
@@ -940,16 +951,16 @@ void randoCreateYamlConfigMenu() {
     }
 
     // lol
-    randoCreateCallbackBoolPropOption(&yaml_config_menu, "Randomize Tunic Color:", "Randomize the color of Link's tunic.", true, tunicColorCallback);
+    randoCreateCallbackBoolPropOption(&yaml_config_menu, "Tunique de couleur aléatoire :", "Donne une couleur aléatoire à la tunique de Link.", true, tunicColorCallback);
 
     // Starting Items tab.
-    randoBeginTab(&yaml_config_menu, "Starting Items");
+    randoBeginTab(&yaml_config_menu, "Objets de départ");
     rando_tab_hide_description[yaml_config_menu.num_tabs - 1] = true;
     
     randoCreateListOption(&yaml_config_menu, "start_inventory_from_pool", "recomp_data.item_names", LIST_DICT_ONES); // TODO: handle item groups correctly
 
     // Excluded Locations tab.
-    randoBeginTab(&yaml_config_menu, "Excluded Locations");
+    randoBeginTab(&yaml_config_menu, "Emplacements exclus");
     rando_tab_hide_description[yaml_config_menu.num_tabs - 1] = true;
     
     randoCreateListOption(&yaml_config_menu, "exclude_locations", "recomp_data.location_names", LIST_STANDARD); // TODO: handle location groups correctly
@@ -968,7 +979,7 @@ void randoCreateYamlConfigMenu() {
     randoSelectTab(&yaml_config_menu, 0);
 
     // Create the back button, parenting it to the root with absolute positioning.
-    yaml_config_menu.back_button = recompui_create_button(yaml_config_menu.context, yaml_config_menu.frame.root, "Back", BUTTONSTYLE_SECONDARY);
+    yaml_config_menu.back_button = recompui_create_button(yaml_config_menu.context, yaml_config_menu.frame.root, "Retour", BUTTONSTYLE_SECONDARY);
     recompui_set_position(yaml_config_menu.back_button, POSITION_ABSOLUTE);
     recompui_set_left(yaml_config_menu.back_button, 64.0f, UNIT_DP);
     recompui_set_top(yaml_config_menu.back_button, 32.0f, UNIT_DP);

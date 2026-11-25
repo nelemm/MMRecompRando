@@ -53,6 +53,23 @@ void updateEntryStyle(SeedEntry* entry, u32 index) {
     }
 }
 
+// local patch: bounded "prefix + text + \n" (sprintf could overflow the 128-byte buffer
+// if a session's date or seed name is unexpectedly long).
+static void soloFormatLabel(char* out, u32 outSize, const char* prefix, const char* text) {
+    u32 len = 0;
+    if (outSize == 0) {
+        return;
+    }
+    for (const char* p = prefix; *p != '\0' && len + 2 < outSize; p++) {
+        out[len++] = *p;
+    }
+    for (const char* p = (text != NULL) ? text : ""; *p != '\0' && len + 2 < outSize; p++) {
+        out[len++] = *p;
+    }
+    out[len++] = '\n';
+    out[len] = '\0';
+}
+
 void selectEntry(u32 index) {
     u32 old_index = solo_menu.selected_entry;
     solo_menu.selected_entry = index;
@@ -66,12 +83,12 @@ void selectEntry(u32 index) {
         char* text_buffer;
 
         rando_solo_get_generation_date(index, &text_buffer);
-        sprintf(label_buffer, "Generated: %s\n", text_buffer);
+        soloFormatLabel(label_buffer, sizeof(label_buffer), "Générée : ", text_buffer);
         recompui_set_text(solo_menu.details_time, label_buffer);
         recomp_free(text_buffer);
 
         rando_solo_get_seed_name(index, &text_buffer);
-        sprintf(label_buffer, "Seed: %s\n", text_buffer);
+        soloFormatLabel(label_buffer, sizeof(label_buffer), "Seed : ", text_buffer);
         recompui_set_text(solo_menu.details_seedname, label_buffer);
         recomp_free(text_buffer);
         
@@ -176,7 +193,8 @@ void createSoloList() {
         u32 last_entry_index = solo_menu.entry_list_size - 1;
         recompui_set_nav(solo_menu.new_seed_button, NAVDIRECTION_UP, solo_menu.entry_list[last_entry_index].entry_button);
         recompui_set_nav(solo_menu.entry_list[last_entry_index].entry_button, NAVDIRECTION_DOWN, solo_menu.new_seed_button);
-        recompui_set_display(solo_menu.start_button, DISPLAY_FLEX);
+        // local patch: DISPLAY_FLEX hid the button label (bare text isn't rendered in a flex container)
+        recompui_set_display(solo_menu.start_button, DISPLAY_BLOCK);
 
         selectEntry(0);
     }
@@ -268,7 +286,7 @@ void randoCreateSoloMenu() {
     recompui_set_text_align(solo_menu.header, TEXT_ALIGN_CENTER);
 
     // Create the title.
-    solo_menu.title = recompui_create_label(solo_menu.context, solo_menu.header, "Previous Sessions", LABELSTYLE_LARGE);
+    solo_menu.title = recompui_create_label(solo_menu.context, solo_menu.header, "Sessions précédentes", LABELSTYLE_LARGE);
 
     // Create the body.
     solo_menu.body = recompui_create_element(solo_menu.context, solo_menu.frame.container);
@@ -325,7 +343,7 @@ void randoCreateSoloMenu() {
 
     recompui_set_display(solo_menu.details_footer, DISPLAY_FLEX);
     recompui_set_flex_direction(solo_menu.details_footer, FLEX_DIRECTION_ROW);
-    recompui_set_justify_content(solo_menu.details_footer, JUSTIFY_CONTENT_CENTER);
+    recompui_set_justify_content(solo_menu.details_footer, JUSTIFY_CONTENT_FLEX_END);
     recompui_set_padding(solo_menu.details_footer, 8.0f, UNIT_DP);
 
     // Create the labels in the details header.
@@ -334,7 +352,7 @@ void randoCreateSoloMenu() {
     solo_menu.details_seedname = recompui_create_label(solo_menu.context, solo_menu.details_header, "", LABELSTYLE_NORMAL);
 
     // Create the start button.
-    solo_menu.start_button = recompui_create_button(solo_menu.context, solo_menu.details_footer, "Start", BUTTONSTYLE_SECONDARY);
+    solo_menu.start_button = recompui_create_button(solo_menu.context, solo_menu.details_footer, "Lancer", BUTTONSTYLE_SECONDARY);
     recompui_register_callback(solo_menu.start_button, startPressed, NULL);
     recompui_set_width(solo_menu.start_button, 300.0f, UNIT_DP);
     recompui_set_text_align(solo_menu.start_button, TEXT_ALIGN_CENTER);
@@ -357,18 +375,18 @@ void randoCreateSoloMenu() {
     recompui_set_text_align(solo_menu.footer, TEXT_ALIGN_CENTER);
 
     // Create the new seed button.
-    solo_menu.new_seed_button = recompui_create_button(solo_menu.context, solo_menu.footer, "New Session", BUTTONSTYLE_SECONDARY);
+    solo_menu.new_seed_button = recompui_create_button(solo_menu.context, solo_menu.footer, "Nouvelle session", BUTTONSTYLE_SECONDARY);
     recompui_set_width(solo_menu.new_seed_button, 300.0f, UNIT_DP);
     recompui_register_callback(solo_menu.new_seed_button, newSeedPressed, NULL);
 
     // Create the YAML import button
-    solo_menu.import_button = recompui_create_button(solo_menu.context, solo_menu.footer, "Import YAML", BUTTONSTYLE_SECONDARY);
+    solo_menu.import_button = recompui_create_button(solo_menu.context, solo_menu.footer, "Importer un YAML", BUTTONSTYLE_SECONDARY);
     recompui_set_width(solo_menu.import_button, 300.0f, UNIT_DP);
     recompui_set_margin_left(solo_menu.import_button, 12.0f, UNIT_DP);
     recompui_register_callback(solo_menu.import_button, importPressed, NULL);
 
     // Create the back button, parenting it to the root with absolute positioning.
-    solo_menu.back_button = recompui_create_button(solo_menu.context, solo_menu.frame.root, "Back", BUTTONSTYLE_SECONDARY);
+    solo_menu.back_button = recompui_create_button(solo_menu.context, solo_menu.frame.root, "Retour", BUTTONSTYLE_SECONDARY);
     recompui_set_position(solo_menu.back_button, POSITION_ABSOLUTE);
     recompui_set_left(solo_menu.back_button, 64.0f, UNIT_DP);
     recompui_set_top(solo_menu.back_button, 32.0f, UNIT_DP);

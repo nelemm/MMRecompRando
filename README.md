@@ -1,3 +1,60 @@
+# MMRecompRando — French & fixes fork
+
+> **This is a fork** of [RecompRando/MMRecompRando](https://github.com/RecompRando/MMRecompRando), based on its development branch `python-glue` (October 2026). It enables the pot, grass, crate and other "sanity" checks that are not in an official release yet, and adds the fixes below. The upstream README follows after this section.
+
+[English](#about-this-fork) · [Français](#à-propos-de-ce-fork)
+
+## About this fork
+
+### Security fixes (online / Archipelago)
+- **Save file name**: built with a bounded copy instead of `sprintf` into a 72-byte buffer, and path separators / invalid characters from the slot or seed name (sent by the server) are replaced. Prevents a stack overflow and writing a save outside the save folder.
+- **In-game messages**: the 53 `EZTR_MsgSContent_Sprintf` calls that insert item / player names are now `EZTR_MsgSContent_Snprintf` bounded to the message buffer.
+- **`sanitizeRandoText`**: index widened from `u8` to `u32`. Names of 256+ bytes made the loop wrap forever and froze the game.
+- **Solo menu labels**: bounded formatting of the session date and seed name.
+
+### Bug fixes
+- **Containers that are not checks** (crates, barrels, rocks, trees, signs, snowballs, webs, hit spots, soft soil…) no longer drop *nothing*: the 53 conditions now check `rando_location_exists()`, like pots and grass already did, and fall back to the vanilla drop.
+- **Logic (apworld, `NormalRules.py`)**:
+  - Without owlsanity, `can_use_owl` always returned false, making the inside of Gorman Racetrack unreachable in some settings (generation failure). The Clock Town owl now counts (Song of Soaring + sword / Goron / Zora).
+  - With NPC souls and without shopsanity, `can_get_red_potion` queried a shop location that doesn't exist (`KeyError`, generation crash). The Trading Post now sells its Red Potion vanilla-style.
+- **Compatibility**: builds against the released *Better Double SoT 1.0.0* (unused debug `dsot_set_time` call and `dsot_on_whitelist_check` callback removed) and no longer patches `EnFall_LodMoon_Draw`, which conflicted with *Disable Draw Distance*.
+- **Solo menu**: the *Start* button label was invisible (`DISPLAY_FLEX` on a button with a bare text node); it is now shown and right-aligned.
+
+### Additions
+- **French interface**: menus, buttons and the 83 randomizer options (names, descriptions, choices, groups). Only displayed text changes: option ids and values written to the YAML are untouched. Translations live in `apworld/mm_recomp/rando_fr.py`.
+- **Mod settings**: *Lune* (normal moon or the dev branch's frog moon, normal by default) and *Couleur de l'herbe* (grass colouring follows the container setting, never coloured, or gold until collected).
+
+### Building and dependencies
+
+This branch builds with `modbuild.py`, which downloads its own MIPS toolchain:
+
+```bash
+git clone --recurse-submodules -b fr-fixes https://github.com/nelemm/MMRecompRando
+cd MMRecompRando
+python modbuild.py build -n debug   # build/mm_recomp_rando.nrm
+python modbuild.py apworld          # build/mm_recomp.apworld
+```
+
+Python 3.12+ is required (`modbuild.py` uses `Path.relative_to(..., walk_up=True)`), plus `make`.
+The mod needs these mods in the same folder:
+- [RecompExternalPython_API](https://github.com/LT-Schmiddy/zelda64recomp-python-extlibs-mod/releases) 2.0.0+ (`RecompExternalPython_for_Zelda64Recompiled` package);
+- [REPY_PopularPythonPackages](https://github.com/LT-Schmiddy/repy_popular_python_packages) 1.0.0, which has no published release: build it with `python modbuild.py build -n zelda_debug`;
+- [MM_EZ_Text_Replacer_API](https://thunderstore.io/c/zelda-64-recompiled/) 2.3.0+.
+
+The release only contains the apworld: the `.nrm` embeds code from repositories without a license, so it is not redistributed here.
+
+Generation was tested with 60+ seeds (normal logic, every new sanity alone and combined, souls, entrance rando, swordless / ocarinaless, nearly-no-logic).
+
+## À propos de ce fork
+
+Fork de [RecompRando/MMRecompRando](https://github.com/RecompRando/MMRecompRando), basé sur la branche de développement `python-glue` (octobre 2026), qui active les checks de jarres, d'herbe, de caisses et les autres « sanities » pas encore publiés officiellement.
+
+- **Sécurité (jeu en ligne)** : nom de fichier de sauvegarde borné et nettoyé (noms envoyés par le serveur), messages en jeu bornés, boucle de `sanitizeRandoText` corrigée (gel du jeu avec des noms de 256 octets ou plus), libellés du menu solo bornés.
+- **Bugs** : les conteneurs qui ne sont pas des checks redonnent leur contenu normal ; deux erreurs de logique de l'apworld corrigées (hiboux sans owlsanity, potion rouge sans shopsanity) ; compatibilité avec *Better Double SoT 1.0.0* et *Disable Draw Distance* ; bouton *Lancer* du menu solo visible.
+- **Ajouts** : interface et réglages du randomizer en français, réglages *Lune* et *Couleur de l'herbe* dans le menu Mods.
+
+---
+
 # MMRecompRando
 
 This is an Archipelago randomizer mod for Majora's Mask: Recompiled with both Singleplayer and Multiworld support.

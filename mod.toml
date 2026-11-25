@@ -118,6 +118,31 @@ options = [ "Disabled", "Show Unchecked", "Enabled" ]
 default = "Enabled"
 
 [[manifest.config_options]]
+id = "moon_appearance"
+name = "Lune"
+description = """Apparence de la lune.
+
+Normale : la lune d'origine.
+Grenouille : la blague des développeurs du rando, une grenouille géante à la place de la lune.
+
+Le changement s'applique au prochain changement de zone."""
+type = "Enum"
+options = [ "Normale", "Grenouille" ]
+default = "Normale"
+
+[[manifest.config_options]]
+id = "grass_appearance"
+name = "Couleur de l'herbe (Grasssanity)"
+description = """Choisit si l'herbe qui contient un check est colorée.
+
+Comme les conteneurs : suit le réglage « Container Appearance Matches Contents » ci-dessus.
+Normale : l'herbe garde toujours sa couleur d'origine.
+Doree si non prise : l'herbe est dorée tant que son check n'est pas pris, sans indiquer ce qu'elle contient."""
+type = "Enum"
+options = [ "Comme les conteneurs", "Normale", "Doree si non prise" ]
+default = "Comme les conteneurs"
+
+[[manifest.config_options]]
 id = "show_soul_model"
 name = "Show Full Models for Souls"
 description = "Sets whether or not Soul items display as their in-game model or a generic token."

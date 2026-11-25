@@ -17,6 +17,13 @@
 
 s16 fallTrueGI;
 
+// local patch: "moon_appearance" mod option (0 = normal moon, 1 = frog moon from the dev branch).
+// Read once per moon actor (in EnFall_Init), so a change applies after the next scene load:
+// the frog mode swaps the actor's object, which the normal moon model must not use.
+#define MOON_APPEARANCE_NORMAL 0
+#define gMoonDL ((Gfx*)0x060077F0) // object_fall, segment 6
+static bool sMoonIsFrog = false;
+
 static bool fallObjectStatic;
 static bool fallObjectLoading;
 static bool fallObjectLoaded;
@@ -27,6 +34,7 @@ RECOMP_HOOK("EnFall_Init")
 void EnFall_RandoInit(Actor* thisx, PlayState* play) {
     EnFall* this = THIS;
 
+    sMoonIsFrog = (recomp_get_config_u32("moon_appearance") != MOON_APPEARANCE_NORMAL);
     fallTrueGI = GI_FROG_WHITE;
     fallObjectSegment = ZeldaArena_Malloc(0x2000);
     fallObjectStatic = false;
@@ -61,7 +69,7 @@ void EnFall_WaitForObject(EnFall* this, PlayState* play) {
 RECOMP_PATCH void EnFall_Update(Actor* thisx, PlayState* play) {
     EnFall* this = THIS;
 
-    if (!fallObjectLoaded) {
+    if (sMoonIsFrog && !fallObjectLoaded) {
         EnFall_WaitForObject(this, play);
         return;
     }
@@ -124,14 +132,27 @@ RECOMP_PATCH void EnFall_Moon_Draw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx);
 
-    gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
-    Matrix_MultVec3f(sFocusOffset, &this->actor.focus.pos);
+    if (!sMoonIsFrog) {
+        // Vanilla EnFall_Moon_Draw.
+        Gfx_SetupDL25_Opa(play->state.gfxCtx);
+        gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        Matrix_MultVec3f(sFocusOffset, &this->actor.focus.pos);
+        primColor = (this->eyeGlowIntensity * 200.0f) + 40.0f;
+        gDPSetPrimColor(POLY_OPA_DISP++, 0, 0x80, primColor, primColor, primColor, 255);
+        gSPDisplayList(POLY_OPA_DISP++, gMoonDL);
+    } else {
+        gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
+        Matrix_MultVec3f(sFocusOffset, &this->actor.focus.pos);
 
-    EnFall_RandoDraw(this, play);
+        EnFall_RandoDraw(this, play);
+    }
 
     CLOSE_DISPS(play->state.gfxCtx);
 }
 
+// local patch: conflicts with mm_recomp_draw_distance, which patches EnFall_LodMoon_Draw
+// to call EnFall_Moon_Draw (already patched above to use EnFall_RandoDraw).
+#if 0
 RECOMP_PATCH void EnFall_LodMoon_Draw(Actor* thisx, PlayState* play) {
     s32 pad;
     EnFall* this = THIS;
@@ -143,6 +164,7 @@ RECOMP_PATCH void EnFall_LodMoon_Draw(Actor* thisx, PlayState* play) {
 
     CLOSE_DISPS(play->state.gfxCtx);
 }
+#endif
 
 RECOMP_PATCH void EnFall_OpenMouthMoon_Draw(Actor* thisx, PlayState* play) {
     EnFall* this = THIS;

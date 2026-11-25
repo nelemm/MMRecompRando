@@ -8,6 +8,7 @@
 #include "actor_helpers.h"
 
 #include "rando_colors.h"
+#include "recompconfig.h"
 #include "grass.h"
 
 #include "overlays/actors/ovl_Obj_Grass/z_obj_grass.h"
@@ -51,10 +52,35 @@ RECOMP_IMPORT("*", ActorExtensionId actor_transform_id(Actor* actor));
 #define gEXMatrixGroupDecomposedNormal(cmd, id, push, proj, edit) \
     gEXMatrixGroupDecomposed(cmd, id, push, proj, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_INTERPOLATE, G_EX_COMPONENT_SKIP, G_EX_COMPONENT_INTERPOLATE, G_EX_ORDER_LINEAR, edit)
 
+// local patch: per-grass appearance setting ("grass_appearance" in mod config)
+typedef enum {
+    GRASS_APPEARANCE_FOLLOW_CAMC, // same as the global container setting
+    GRASS_APPEARANCE_NORMAL,      // never colored
+    GRASS_APPEARANCE_UNCHECKED,   // gold while the check is not collected
+} GrassAppearance;
+
+static bool grass_get_color(Color_RGB8* color, u32 location) {
+    if (!rando_location_exists(location)) {
+        return false;
+    }
+    switch (recomp_get_config_u32("grass_appearance")) {
+        case GRASS_APPEARANCE_NORMAL:
+            return false;
+        case GRASS_APPEARANCE_UNCHECKED:
+            if (rando_location_is_checked(location)) {
+                return false;
+            }
+            *color = goldColor;
+            return true;
+        default:
+            return get_rando_color(color, location);
+    }
+}
+
 Gfx* GenericGrass_DrawRandoColored(PlayState* play, Gfx* original, Gfx* gfx, u8 alpha, u32 location) {
     Color_RGB8 color;
-    
-    if (!rando_location_exists(location) || !get_rando_color(&color, location)) {
+
+    if (!grass_get_color(&color, location)) {
         gDPSetPrimColor(gfx++, 0, 0, 255, 255, 255, alpha);
         gSPDisplayList(gfx++, original);
         return gfx;
