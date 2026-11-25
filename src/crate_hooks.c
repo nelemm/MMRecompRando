@@ -25,7 +25,7 @@ void OnObjKibako_Init(Actor* thisx, PlayState* play) {
 RECOMP_HOOK("ObjKibako_SpawnCollectible")
 void OnObjKibako_SpawnCollectible(ObjKibako* this, PlayState* play) {
     u32* crateSmallLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("woodsanity") && !rando_location_is_checked(*crateSmallLocation)) {
+    if (rando_get_slotdata_u32("woodsanity") && (rando_location_exists(*crateSmallLocation) && !rando_location_is_checked(*crateSmallLocation))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *crateSmallLocation);
         this->isDropCollected = 1;
     }
@@ -75,7 +75,7 @@ RECOMP_PATCH void ObjKibako2_SpawnCollectible(ObjKibako2* this, PlayState* play)
     s32 dropItem00Id = func_800A8150(KIBAKO2_COLLECTIBLE_ID(&this->dyna.actor));
 
     u32* crateBigLocation = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("woodsanity") && !rando_location_is_checked(*crateBigLocation)) {
+    if (rando_get_slotdata_u32("woodsanity") && (rando_location_exists(*crateBigLocation) && !rando_location_is_checked(*crateBigLocation))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos,
             dropItem00Id | KIBAKO2_COLLECTIBLE_FLAG(&this->dyna.actor) << 8, *crateBigLocation);
         return;

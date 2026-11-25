@@ -36,7 +36,7 @@ void AfterObjBombiwa_CheckBroken() {
 
     if (Flags_GetSwitch(play, OBJBOMBIWA_GET_SWITCH_FLAG(&this->actor))) {
         boulderLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-        if (rando_get_slotdata_u32("rocksanity") && !rando_location_is_checked(*boulderLocation)) {
+        if (rando_get_slotdata_u32("rocksanity") && (rando_location_exists(*boulderLocation) && !rando_location_is_checked(*boulderLocation))) {
             Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *boulderLocation);
         }
     }
@@ -52,7 +52,7 @@ void OnObjHamishi_Init(Actor* thisx, PlayState* play) {
 RECOMP_HOOK("func_809A10F4")
 void ObjHamishi_Broken(ObjHamishi* this, PlayState* play) {
     u32* boulder2Location = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("rocksanity") && !rando_location_is_checked(*boulder2Location)) {
+    if (rando_get_slotdata_u32("rocksanity") && (rando_location_exists(*boulder2Location) && !rando_location_is_checked(*boulder2Location))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *boulder2Location);
     }
 }

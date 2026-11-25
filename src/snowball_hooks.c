@@ -32,7 +32,7 @@ RECOMP_PATCH void func_80B38E88(ObjSnowball2* this, PlayState* play) {
         temp_v0 = func_800A8150(ENOBJSNOWBALL2_GET_3F(&this->actor));
         
         snowballLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-        if (rando_get_slotdata_u32("snowsanity") && !rando_location_is_checked(*snowballLocation)) {
+        if (rando_get_slotdata_u32("snowsanity") && (rando_location_exists(*snowballLocation) && !rando_location_is_checked(*snowballLocation))) {
             Item_RandoDropCollectible(play, &this->actor.world.pos, (ENOBJSNOWBALL2_GET_7F00(&this->actor) << 8) | temp_v0, *snowballLocation);
             this->unk_1AE = 1;
             return;
@@ -61,7 +61,7 @@ void on_func_80B03FF8(ObjSnowball* this, PlayState* play) {
     s32 temp_v0 = func_800A8150(OBJSNOWBALL_GET_SWITCH_FLAG(&this->actor));
     
     u32* snowballLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("snowsanity") && !rando_location_is_checked(*snowballLocation)) {
+    if (rando_get_slotdata_u32("snowsanity") && (rando_location_exists(*snowballLocation) && !rando_location_is_checked(*snowballLocation))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, (OBJSNOWBALL_GET_7F00(&this->actor) << 8) | temp_v0, *snowballLocation);
         return;
     }

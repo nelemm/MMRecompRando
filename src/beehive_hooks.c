@@ -131,7 +131,7 @@ void OnObjComb_Init(Actor* thisx, PlayState* play) {
 RECOMP_HOOK("func_8098D8C8")
 void ObjComb_SpawnItemWithBees(ObjComb* this, PlayState* play) {
     u32* beehiveLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("hivesanity") && !rando_location_is_checked(*beehiveLocation)) {
+    if (rando_get_slotdata_u32("hivesanity") && (rando_location_exists(*beehiveLocation) && !rando_location_is_checked(*beehiveLocation))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *beehiveLocation);
         return;
     }
@@ -141,7 +141,7 @@ RECOMP_PATCH void func_8098D870(ObjComb* this, PlayState* play) {
     s32 temp_v0 = func_800A8150(OBJCOMB_GET_3F(&this->actor));
 
     u32* beehiveLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("hivesanity") && temp_v0 != ITEM00_HEART_PIECE && !rando_location_is_checked(*beehiveLocation)) {
+    if (rando_get_slotdata_u32("hivesanity") && temp_v0 != ITEM00_HEART_PIECE && (rando_location_exists(*beehiveLocation) && !rando_location_is_checked(*beehiveLocation))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, ((OBJCOMB_GET_7F00(&this->actor)) << 8) | temp_v0, *beehiveLocation);
         return;
     }

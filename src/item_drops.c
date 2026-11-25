@@ -351,7 +351,7 @@ RECOMP_PATCH void Item_DropCollectibleRandom(PlayState* play, Actor* fromActor, 
         u32 actorLocation = ACTOR_LOCATION(fromActor);
         bool* actorDropped = z64recomp_get_extended_actor_data(fromActor, actorDroppedExtension);
 
-        if (recomp_get_config_u32("enemy_drops") && (actorLocation & AP_PREFIX_ENEMY_DROP) && !rando_location_is_checked(actorLocation) && !(*actorDropped)) {
+        if (recomp_get_config_u32("enemy_drops") && (actorLocation & AP_PREFIX_ENEMY_DROP) && (rando_location_exists(actorLocation) && !rando_location_is_checked(actorLocation)) && !(*actorDropped)) {
             Item_RandoDropCollectible(play, &fromActor->world.pos, ITEM00_APITEM, actorLocation);
             *actorDropped = true;
             return;

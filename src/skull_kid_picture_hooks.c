@@ -28,7 +28,7 @@ RECOMP_HOOK("BgKin2Picture_SetupFall")
 void BgKin2Picture_DropRandoItem(BgKin2Picture* this) {
     PlayState* play = gPlay;
     
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_PAINTING)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_PAINTING) && !rando_location_is_checked(LOCATION_PAINTING))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_PAINTING);
     }
 }

@@ -27,7 +27,7 @@ void OnObjYasi_Update(Actor* thisx, PlayState* play) {
 
     bool* dropped = z64recomp_get_extended_actor_data(thisx, actorDroppedExtension);
 
-    if (this->dyna.actor.home.rot.z != 0 && rando_get_slotdata_u32("treesanity") && !rando_location_is_checked(LOCATION_PALM_TREE) && !(*dropped)) {
+    if (this->dyna.actor.home.rot.z != 0 && rando_get_slotdata_u32("treesanity") && (rando_location_exists(LOCATION_PALM_TREE) && !rando_location_is_checked(LOCATION_PALM_TREE)) && !(*dropped)) {
         // if (CAN_DROP_NUT(thisx)) {
         //     if (Rand_ZeroOne() < 0.5f) {
                 dropPos.x = this->dyna.actor.world.pos.x;
@@ -54,7 +54,7 @@ void OnEnSnowwd_Idle(EnSnowwd* this, PlayState* play) {
         this->timer = 21;
         thisx->home.rot.y = 0; // should prevent normal drops from happening
 
-        if (!SNOWWD_DROPPED_COLLECTIBLE(&this->actor) && rando_get_slotdata_u32("treesanity") && !rando_location_is_checked(LOCATION_SNOW_TREE)) {
+        if (!SNOWWD_DROPPED_COLLECTIBLE(&this->actor) && rando_get_slotdata_u32("treesanity") && (rando_location_exists(LOCATION_SNOW_TREE) && !rando_location_is_checked(LOCATION_SNOW_TREE))) {
             pos = thisx->world.pos;
             pos.y += 200.0f;
 
@@ -85,7 +85,7 @@ void EnWood02_DropRandoItem(EnWood02* this, PlayState* play, Vec3f* dropsSpawnPt
     recomp_printf("draw type %d\n", this->drawType);
     
     // no idea how this is meant to work, could be simplified further with better understanding
-    if (rando_get_slotdata_u32("treesanity") && !rando_location_is_checked(LOCATION_WOOD_TREE) && !(*dropped)) {
+    if (rando_get_slotdata_u32("treesanity") && (rando_location_exists(LOCATION_WOOD_TREE) && !rando_location_is_checked(LOCATION_WOOD_TREE)) && !(*dropped)) {
         // if ((this->unk_144 == -1) || !Flags_GetCollectible(play, this->unk_144)) {
             if ((this->unk_148 < 0) && (this->unk_148 >= -0x10)) {
                 if (arg3 & 1) {
@@ -109,7 +109,7 @@ void OnObjTree_SetupSway(ObjTree* this) {
     PlayState* play = gPlay;
     bool* dropped = z64recomp_get_extended_actor_data(&this->dyna.actor, actorDroppedExtension);
 
-    if (rando_get_slotdata_u32("treesanity") && !rando_location_is_checked(LOCATION_THIC_TREE) && !(*dropped)) {
+    if (rando_get_slotdata_u32("treesanity") && (rando_location_exists(LOCATION_THIC_TREE) && !rando_location_is_checked(LOCATION_THIC_TREE)) && !(*dropped)) {
         Vec3f dropPos;
 
         dropPos.x = this->dyna.actor.world.pos.x;

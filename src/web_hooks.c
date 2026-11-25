@@ -28,7 +28,7 @@ void OnBgSpdweb_Init(Actor* thisx, PlayState* play) {
 RECOMP_HOOK("func_809CE234")
 void BgSpdweb_Drop1(BgSpdweb* this, PlayState* play) {
     u32* location = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
-    if (this->unk_162 == 1 && rando_get_slotdata_u32("websanity") && !rando_location_is_checked(*location)) {
+    if (this->unk_162 == 1 && rando_get_slotdata_u32("websanity") && (rando_location_exists(*location) && !rando_location_is_checked(*location))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, *location);
         Audio_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
     }
@@ -37,7 +37,7 @@ void BgSpdweb_Drop1(BgSpdweb* this, PlayState* play) {
 RECOMP_HOOK("func_809CE830")
 void BgSpdweb_Drop2(BgSpdweb* this, PlayState* play) {
     u32* location = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
-    if (this->unk_162 == 1 && rando_get_slotdata_u32("websanity") && !rando_location_is_checked(*location)) {
+    if (this->unk_162 == 1 && rando_get_slotdata_u32("websanity") && (rando_location_exists(*location) && !rando_location_is_checked(*location))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, *location);
         Audio_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
     }
@@ -86,7 +86,7 @@ void ObjSpidertent_DropOnSetupBurn(ObjSpidertent* this) {
     PlayState* play = gPlay;
     u32* location = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
 
-    if (!rando_get_slotdata_u32("websanity") || rando_location_is_checked(*location)) return;
+    if (!rando_get_slotdata_u32("websanity") || !rando_location_exists(*location) || rando_location_is_checked(*location)) return;
 
     Actor* item = Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, *location);
     item->velocity.y = 0.0f;

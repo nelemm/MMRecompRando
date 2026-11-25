@@ -11,7 +11,7 @@
 
 RECOMP_HOOK("func_80C0A458")
 void BgAstrBombwall_DropRandoItem(BgAstrBombwall* this, PlayState* play) {
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
     }
 }
@@ -22,7 +22,7 @@ void BgAstrBombwall_DropRandoItem(BgAstrBombwall* this, PlayState* play) {
 RECOMP_HOOK("BgHakaBombwall_SetupPlayCutscene")
 void BgHakaBombwall_DropRandoItem(BgHakaBombwall* this) {
     PlayState* play = gPlay;
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
     }
 }
@@ -33,7 +33,7 @@ void BgHakaBombwall_DropRandoItem(BgHakaBombwall* this) {
 RECOMP_HOOK("func_80ABCD98")
 void BgHakuginBombwall_DropRandoItem(BgHakuginBombwall* this, PlayState* play) {
     if (CutsceneManager_IsNext(this->dyna.actor.csId)) {
-        if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+        if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
             Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
         }
     }
@@ -45,7 +45,7 @@ void BgHakuginBombwall_DropRandoItem(BgHakuginBombwall* this, PlayState* play) {
 RECOMP_HOOK("func_80BD4FF8")
 void BgIkanaBombwall_DropRandoItem(BgIkanaBombwall* this) {
     PlayState* play = gPlay;
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
     }
 }
@@ -56,7 +56,7 @@ void BgIkanaBombwall_DropRandoItem(BgIkanaBombwall* this) {
 RECOMP_HOOK("BgKin2Bombwall_SetupPlayCutscene")
 void BgKin2Bombwall_DropRandoItem(BgKin2Bombwall* this) {
     PlayState* play = gPlay;
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
     }
 }
@@ -66,7 +66,7 @@ void BgKin2Bombwall_DropRandoItem(BgKin2Bombwall* this) {
 
 RECOMP_HOOK("func_80C188C4")
 void BgLastBwall_DropRandoItem(BgLastBwall* this, PlayState* play) {
-    if (rando_get_slotdata_u32("oneoffs") && !rando_location_is_checked(LOCATION_BOMBWALL)) {
+    if (rando_get_slotdata_u32("oneoffs") && (rando_location_exists(LOCATION_BOMBWALL) && !rando_location_is_checked(LOCATION_BOMBWALL))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, LOCATION_BOMBWALL);
     }
 }

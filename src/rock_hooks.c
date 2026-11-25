@@ -41,7 +41,7 @@ void add_rock_and_boulder_locations() {
 
 RECOMP_PATCH void func_8095DF90(EnIshi* this, PlayState* play) {
     u32* rockLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("rocksanity") && !rando_location_is_checked(*rockLocation)) {
+    if (rando_get_slotdata_u32("rocksanity") && (rando_location_exists(*rockLocation) && !rando_location_is_checked(*rockLocation))) {
         Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *rockLocation);
         return;
     }
@@ -65,7 +65,7 @@ RECOMP_PATCH void func_8095DFF0(EnIshi* this, PlayState* play) {
 
     if (temp >= 0) {
         rockLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-        if (rando_get_slotdata_u32("rocksanity") && !rando_location_is_checked(*rockLocation)) {
+        if (rando_get_slotdata_u32("rocksanity") && (rando_location_exists(*rockLocation) && !rando_location_is_checked(*rockLocation))) {
             sp3C = Item_RandoDropCollectible(play, &this->actor.world.pos, temp | (ENISHI_GET_FLAG(&this->actor) << 8), *rockLocation);
         } else {
             sp3C = Item_DropCollectible(play, &this->actor.world.pos, temp | (ENISHI_GET_FLAG(&this->actor) << 8));

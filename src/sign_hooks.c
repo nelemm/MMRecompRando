@@ -96,7 +96,7 @@ void EnKanban_DropItem(Actor* thisx, PlayState* play) {
     if (this->actionState == ENKANBAN_SIGN) {
         if ((this->invincibilityTimer == 0) && (this->collider.base.acFlags & AC_HIT)) {
             if (this->unk_19C != this->collider.base.ac) { // i don't know what this line does
-                if (rando_get_slotdata_u32("signsanity") && !rando_location_is_checked(*location) && !(*dropped)) {
+                if (rando_get_slotdata_u32("signsanity") && (rando_location_exists(*location) && !rando_location_is_checked(*location)) && !(*dropped)) {
                     Item_RandoDropCollectible(play, &thisx->world.pos, 0x60, *location);
                     *dropped = true;
                 }

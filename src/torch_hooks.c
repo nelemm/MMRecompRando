@@ -65,7 +65,7 @@ void ObjSyokudai_CheckLit(Actor* thisx, PlayState* play) {
     if (!recomp_get_config_u32("torchsanity")) return;
 
     // Torch was already dropped/collected
-    if (ObjSyokudai_HasDropped(&this->actor) || rando_location_is_checked(LOCATION_TORCH)) return;
+    if (ObjSyokudai_HasDropped(&this->actor) || !rando_location_exists(LOCATION_TORCH) || rando_location_is_checked(LOCATION_TORCH)) return;
 
     Vec3f itemSpawnPos = this->actor.world.pos;
     itemSpawnPos.y += OBJ_SYOKUDAI_FLAME_HEIGHT;

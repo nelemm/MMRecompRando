@@ -56,7 +56,7 @@ void OnEnHitTag_Update(Actor* thisx, PlayState* play) {
     
     for (u8 i = 0; i < 3; i++) {
         wonderHitRupeeLocation = *wonderHitLocation | i;
-        if (!rando_location_is_checked(wonderHitRupeeLocation)) {
+        if ((rando_location_exists(wonderHitRupeeLocation) && !rando_location_is_checked(wonderHitRupeeLocation))) {
             shouldShow = true;
             break;
         }
@@ -104,7 +104,7 @@ RECOMP_PATCH void EnHitTag_WaitForHit(EnHitTag* this, PlayState* play) {
 
         for (i = 0; i < 3; i++) {
             u32 wonderHitRupeeLocation = *wonderHitLocation | i;
-            if (rando_get_slotdata_u32("hitsanity") && !rando_location_is_checked(wonderHitRupeeLocation)) {
+            if (rando_get_slotdata_u32("hitsanity") && (rando_location_exists(wonderHitRupeeLocation) && !rando_location_is_checked(wonderHitRupeeLocation))) {
                 Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, wonderHitRupeeLocation);
             } else {
                 Item_DropCollectible(play, &dropLocation, ITEM00_RUPEE_GREEN);
@@ -128,7 +128,7 @@ void OnEnInvisibleRuppe_Update(Actor* thisx, PlayState* play) {
     u32* wonderRupeeLocation = z64recomp_get_extended_actor_data(thisx, actorLocationExtension);
     Color_RGB8 color = { 127, 255, 255 };
 
-    if (!rando_get_slotdata_u32("invisisanity") || rando_location_is_checked(*wonderRupeeLocation)) return;
+    if (!rando_get_slotdata_u32("invisisanity") || !rando_location_exists(*wonderRupeeLocation) || rando_location_is_checked(*wonderRupeeLocation)) return;
 
     if (rando_get_camc_enabled() != CAMC_SHOW_UNCHECKED) { // show normal color with "show unchecked" option
         get_rando_color(&color, *wonderRupeeLocation);
@@ -151,7 +151,7 @@ RECOMP_PATCH void func_80C2590C(EnInvisibleRuppe* this, PlayState* play) {
     Actor* item;
     if (this->collider.base.ocFlags1 & OC1_HIT) {
         u32* wonderRupeeLocation = z64recomp_get_extended_actor_data(&this->actor, actorLocationExtension);
-        if (rando_get_slotdata_u32("invisisanity") && !rando_location_is_checked(*wonderRupeeLocation)) {
+        if (rando_get_slotdata_u32("invisisanity") && (rando_location_exists(*wonderRupeeLocation) && !rando_location_is_checked(*wonderRupeeLocation))) {
             item = Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, *wonderRupeeLocation);
             ((EnItem00*)item)->actionFunc = EnItem00_RandoTextAndFreeze;
         } else {
@@ -225,7 +225,7 @@ RECOMP_PATCH void ObjDora_UpdateCollision(ObjDora* this, PlayState* play) {
 
                 if ((ObjDora_IsHalfHour(time) == true) && (this->rupeeDropTimer == 0)) {
                     Actor_PlaySfx(&this->actor, NA_SE_SY_TRE_BOX_APPEAR);
-                    if (rando_get_slotdata_u32("hitsanity") && !rando_location_is_checked(LOCATION_WONDER_HIT_GONG)) {
+                    if (rando_get_slotdata_u32("hitsanity") && (rando_location_exists(LOCATION_WONDER_HIT_GONG) && !rando_location_is_checked(LOCATION_WONDER_HIT_GONG))) {
                         itemDrop = Item_RandoDropCollectible(play, &this->actor.world.pos, ITEM00_APITEM, LOCATION_WONDER_HIT_GONG);
                     } else {
                         itemDrop = Item_DropCollectible(play, &this->actor.world.pos, ITEM00_RUPEE_BLUE);

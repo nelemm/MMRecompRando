@@ -30,7 +30,7 @@ RECOMP_PATCH void func_80B9BC64(ObjTaru* this, PlayState* play) {
     s32 item = func_800A8150(OBJ_TARU_GET_3F(&this->dyna.actor));
 
     u32* barrelLocation = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("woodsanity") && !rando_location_is_checked(*barrelLocation)) {
+    if (rando_get_slotdata_u32("woodsanity") && (rando_location_exists(*barrelLocation) && !rando_location_is_checked(*barrelLocation))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, (OBJ_TARU_GET_7F00(&this->dyna.actor) << 8) | item, *barrelLocation);
         return;
     }
@@ -44,7 +44,7 @@ RECOMP_PATCH void func_80B9BC64(ObjTaru* this, PlayState* play) {
 RECOMP_HOOK("func_80B9B9C8")
 void ObjTaru_DropBarricadeItem(ObjTaru* this, PlayState* play) {
     u32* barrelLocation = z64recomp_get_extended_actor_data(&this->dyna.actor, actorLocationExtension);
-    if (rando_get_slotdata_u32("woodsanity") && !rando_location_is_checked(*barrelLocation)) {
+    if (rando_get_slotdata_u32("woodsanity") && (rando_location_exists(*barrelLocation) && !rando_location_is_checked(*barrelLocation))) {
         Item_RandoDropCollectible(play, &this->dyna.actor.world.pos, ITEM00_APITEM, *barrelLocation);
     }
 }
