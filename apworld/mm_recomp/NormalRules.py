@@ -130,7 +130,14 @@ def can_get_red_potion(state, player, prices, options):
                     can_purchase(state, player, prices, options, SHOP_ID_WITCH_POTION_3)
                 ) or
                 (
-                    state.can_reach("Clock Town Trading Post Shop Item 1", "Location", player) or
+                    # local patch: shop locations only exist with shopsanity; otherwise the
+                    # Trading Post sells its Red Potion vanilla-style (30 rupees).
+                    (
+                        options.shopsanity.value == 0 and
+                        has_soul_npc(state, player, options, "Shop Owners") and
+                        can_afford_price(state, player, options, 30)
+                    ) or
+                    (options.shopsanity.value != 0 and state.can_reach("Clock Town Trading Post Shop Item 1", "Location", player)) or
                     (
                         options.shopsanity.value == 2 and
                         state.can_reach("Clock Town Trading Post Shop (Night) Item 1", "Location", player)
@@ -447,7 +454,12 @@ def has_all_frogs(state, player, options, goal_type="majora"):
 
 def can_use_owl(state, player, options, owl_region):
     if not options.owlsanity.value:
-        return False  
+        # local patch: without owlsanity, owls are activated vanilla-style by hitting them.
+        # The Clock Town owl is reachable from the start, so count it; other owls stay
+        # conservatively unavailable (their regions may not be reachable yet).
+        if owl_region == "Clock Town":
+            return can_play_song("Song of Soaring", state, player) and can_smack_hard(state, player)
+        return False
     return (
         state.has(owl_region + " Owl Statue", player) and 
         can_play_song("Song of Soaring", state, player)
