@@ -22,7 +22,8 @@ bool rando_get_game_is_oot(u32 player_id) {return false;}
 bool rando_get_game_is_ww(u32 player_id) {return false;}
 
 RECOMP_IMPORT("mm_recomp_better_double_sot", void dsot_set_skip_dsot_cutscene(bool new_val));
-RECOMP_IMPORT("mm_recomp_better_double_sot", void dsot_set_time(PlayState* play, s32 day, u16 time));
+// local patch: dsot_set_time absent from released Better Double SoT 1.0.0
+// RECOMP_IMPORT("mm_recomp_better_double_sot", void dsot_set_time(PlayState* play, s32 day, u16 time));
 
 RECOMP_IMPORT("mm_recomp_colors", void colors_set_human_tunic(u8 r, u8 g, u8 b));
 
@@ -775,7 +776,7 @@ void update_rando(PlayState* play) {
     // testing for time skips
     if (hasBDSoTMod && recomp_get_config_u32("skip_time") && CHECK_BTN_ALL(CONTROLLER1(&play->state)->press.button, BTN_L)) {
         // dsot_set_time(play, day, CLOCK_TIME(hour, 0));
-        dsot_set_time(play, recomp_get_config_u32("time_day"), CLOCK_TIME(recomp_get_config_u32("time_hour"), 0));
+        // dsot_set_time(play, recomp_get_config_u32("time_day"), CLOCK_TIME(recomp_get_config_u32("time_hour"), 0));
         // macros to maybe use later
         // TIME_UNTIL_MOON_CRASH
         // TIME_UNTIL_NEW_DAY

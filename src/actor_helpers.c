@@ -681,10 +681,11 @@ void Rando_ShouldActorInit(PlayState* play, Actor* actor, bool* should) {
 }
 
 // this is likely temporary as we'd want to PR most if not all of these (unless its a rando only issue)
-RECOMP_IMPORT("mm_recomp_better_double_sot", void dsot_set_whitelist_true(void));
+// RECOMP_IMPORT("mm_recomp_better_double_sot", void dsot_set_whitelist_true(void));
 
 // anything that should actually respawn on time changes should go in here
-RECOMP_CALLBACK("mm_recomp_better_double_sot", dsot_on_whitelist_check)
+// local patch: event absent from Better Double SoT 1.0.0
+// RECOMP_CALLBACK("mm_recomp_better_double_sot", dsot_on_whitelist_check)
 void dsot_set_rando_actor_whitelists(s16 actor_id) {
     // switch (actor_id) {
     //     case ACTOR:
