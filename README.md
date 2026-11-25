@@ -18,6 +18,8 @@
   - Without owlsanity, `can_use_owl` always returned false, making the inside of Gorman Racetrack unreachable in some settings (generation failure). The Clock Town owl now counts (Song of Soaring + sword / Goron / Zora).
   - With NPC souls and without shopsanity, `can_get_red_potion` queried a shop location that doesn't exist (`KeyError`, generation crash). The Trading Post now sells its Red Potion vanilla-style.
 - **Compatibility**: builds against the released *Better Double SoT 1.0.0* (unused debug `dsot_set_time` call and `dsot_on_whitelist_check` callback removed) and no longer patches `EnFall_LodMoon_Draw`, which conflicted with *Disable Draw Distance*.
+- **Frog moon buffer**: the object buffer is only allocated in frog mode, freed with its moon actor, and the moon falls back to normal mode if allocation fails (it used to load to a NULL address).
+- **Better Double SoT in the final hours**: choosing an hour between 0:00 and 6:00 on day 3 crashes the game; the hour cursor is locked during the final hours (Better Double SoT itself is not modified).
 - **Solo menu**: the *Start* button label was invisible (`DISPLAY_FLEX` on a button with a bare text node); it is now shown and right-aligned.
 
 ### Additions
@@ -50,7 +52,7 @@ Generation was tested with 60+ seeds (normal logic, every new sanity alone and c
 Fork de [RecompRando/MMRecompRando](https://github.com/RecompRando/MMRecompRando), basé sur la branche de développement `python-glue` (octobre 2026), qui active les checks de jarres, d'herbe, de caisses et les autres « sanities » pas encore publiés officiellement.
 
 - **Sécurité (jeu en ligne)** : nom de fichier de sauvegarde borné et nettoyé (noms envoyés par le serveur), messages en jeu bornés, boucle de `sanitizeRandoText` corrigée (gel du jeu avec des noms de 256 octets ou plus), libellés du menu solo bornés.
-- **Bugs** : les conteneurs qui ne sont pas des checks redonnent leur contenu normal ; deux erreurs de logique de l'apworld corrigées (hiboux sans owlsanity, potion rouge sans shopsanity) ; compatibilité avec *Better Double SoT 1.0.0* et *Disable Draw Distance* ; bouton *Lancer* du menu solo visible.
+- **Bugs** : les conteneurs qui ne sont pas des checks redonnent leur contenu normal ; tampon de la lune grenouille sécurisé ; curseur de Better Double SoT bloqué pendant les dernières heures (choisir une heure y fait crasher le jeu) ; deux erreurs de logique de l'apworld corrigées (hiboux sans owlsanity, potion rouge sans shopsanity) ; compatibilité avec *Better Double SoT 1.0.0* et *Disable Draw Distance* ; bouton *Lancer* du menu solo visible.
 - **Ajouts** : interface et réglages du randomizer en français, réglages *Lune* et *Couleur de l'herbe* dans le menu Mods.
 
 ---
