@@ -90,6 +90,28 @@ void randoStart(bool multiworld) {
 // Startup Menu
 void Setup_InitImpl(SetupState* this);
 
+// Appends `src` to `dst` (always NUL-terminated, never past dstSize). When `sanitize` is set,
+// path separators, characters invalid in Windows file names and control characters are
+// replaced by '_' (other characters are kept so existing save names stay the same).
+// Returns the new length.
+static u32 randoAppendSafe(char* dst, u32 dstSize, u32 len, const char* src, bool sanitize) {
+    if (dstSize == 0) {
+        return 0;
+    }
+    if (src != NULL) {
+        for (; *src != '\0' && len + 1 < dstSize; src++) {
+            unsigned char c = (unsigned char)*src;
+            if (sanitize && (c < 0x20 || c == 0x7F || c == '/' || c == '\\' || c == ':' || c == '*' ||
+                             c == '?' || c == '"' || c == '<' || c == '>' || c == '|')) {
+                c = '_';
+            }
+            dst[len++] = (char)c;
+        }
+    }
+    dst[len] = '\0';
+    return len;
+}
+
 void RandoMenu_Main(GameState* thisx) {
     SetupState* this = (SetupState*)thisx;
 
@@ -103,11 +125,20 @@ void RandoMenu_Main(GameState* thisx) {
         char file_name[72];
         rando_get_seed_name(&seed_name, sizeof(seed_name));
         rando_get_own_slot_name(&slot_name);
+        // local patch (security): slot and seed names come from the user / Archipelago server.
+        // Build the save file name with a bounded copy and without path separators or invalid
+        // characters, so an unexpected or malicious name can neither overflow file_name nor
+        // point outside the save folder ("../").
+        u32 len = 0;
         if (is_multiworld) {
-            sprintf(file_name, "multi_%s_%s", slot_name, seed_name);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, "multi_", false);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, slot_name, true);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, "_", false);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, seed_name, true);
         }
         else {
-            sprintf(file_name, "solo_%s", seed_name);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, "solo_", false);
+            len = randoAppendSafe(file_name, sizeof(file_name), len, seed_name, true);
         }
         recomp_change_save_file(file_name);
 
