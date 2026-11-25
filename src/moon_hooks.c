@@ -28,7 +28,8 @@ static bool fallObjectStatic;
 static bool fallObjectLoading;
 static bool fallObjectLoaded;
 static OSMesgQueue fallObjectLoadQueue;
-static void* fallObjectSegment;
+static void* fallObjectSegment = NULL;
+static Actor* sFallSegmentOwner = NULL;
 
 RECOMP_HOOK("EnFall_Init")
 void EnFall_RandoInit(Actor* thisx, PlayState* play) {
@@ -36,10 +37,35 @@ void EnFall_RandoInit(Actor* thisx, PlayState* play) {
 
     sMoonIsFrog = (recomp_get_config_u32("moon_appearance") != MOON_APPEARANCE_NORMAL);
     fallTrueGI = GI_FROG_WHITE;
-    fallObjectSegment = ZeldaArena_Malloc(0x2000);
+    // local patch: the 0x2000 buffer is only needed by the frog moon. It used to be allocated for
+    // every EnFall actor and never freed. Allocate it once (owned by the first actor, freed in
+    // EnFall_Destroy), and fall back to the normal moon if the allocation fails instead of
+    // loading the frog object to a NULL address.
+    if (sMoonIsFrog && (fallObjectSegment == NULL)) {
+        fallObjectSegment = ZeldaArena_Malloc(0x2000);
+        sFallSegmentOwner = thisx;
+    }
+    if (fallObjectSegment == NULL) {
+        sMoonIsFrog = false;
+    }
     fallObjectStatic = false;
     fallObjectLoading = false;
     fallObjectLoaded = false;
+}
+
+RECOMP_HOOK("EnFall_Destroy")
+void EnFall_RandoDestroy(Actor* thisx, PlayState* play) {
+    if ((thisx == sFallSegmentOwner) && (fallObjectSegment != NULL)) {
+        // Make sure no frog object load is still writing into the buffer.
+        if (fallObjectLoading) {
+            osRecvMesg(&fallObjectLoadQueue, NULL, OS_MESG_BLOCK);
+            fallObjectLoading = false;
+        }
+        ZeldaArena_Free(fallObjectSegment);
+        fallObjectSegment = NULL;
+        sFallSegmentOwner = NULL;
+        fallObjectLoaded = false;
+    }
 }
 
 void EnFall_WaitForObject(EnFall* this, PlayState* play) {
@@ -69,7 +95,8 @@ void EnFall_WaitForObject(EnFall* this, PlayState* play) {
 RECOMP_PATCH void EnFall_Update(Actor* thisx, PlayState* play) {
     EnFall* this = THIS;
 
-    if (sMoonIsFrog && !fallObjectLoaded) {
+    // local patch: never load the frog object without a buffer (freed when its owner is destroyed).
+    if (sMoonIsFrog && !fallObjectLoaded && (fallObjectSegment != NULL)) {
         EnFall_WaitForObject(this, play);
         return;
     }
