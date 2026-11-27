@@ -294,9 +294,12 @@ RECOMP_PATCH void EnMnk_MonkeyTiedUp_TransitionAfterTalk(EnMnk* this, PlayState*
         } else {
             this->unk_3E0 = 2;
         }
-    } else if (play->msgCtx.msgBufPos == 0 && play->msgCtx.currentTextId == 0x8D3) {
-        play->msgCtx.font.msgBuf.schar[0x90] = 0xBF;
-    } else if (play->msgCtx.msgBufPos == 0x90 && play->msgCtx.currentTextId == 0x8D3 && Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING) {
+    } else if (play->msgCtx.currentTextId == 0x8D3 &&
+               ((Message_GetState(&play->msgCtx) == TEXT_STATE_5 && Message_ShouldAdvance(play)) ||
+                Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING)) {
+        // fr-fixes: close on the end of the text (as the vanilla game does), whatever its length. The former patch cut
+        // the text at the fixed byte 0x90 and waited for that exact position: right for the English text only, with a
+        // translated text the box never closed and the game was stuck in the dialogue.
         Message_CloseTextbox(play);
         this->actionFunc = EnMnk_MonkeyTiedUp_WaitForInstrument;
         EnMnk_MonkeyTiedUp_SetAnim(this, MONKEY_TIEDUP_ANIM_WAIT);

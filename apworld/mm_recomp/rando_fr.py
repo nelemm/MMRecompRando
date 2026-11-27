@@ -57,6 +57,16 @@ CHOICES = {
     "items": "Objets",
 }
 
+# Libellés de choix propres à une option, quand le libellé commun est trop long : le menu du jeu met tous
+# les choix sur une seule ligne, sans retour à la ligne, et les libellés longs écrasent les autres.
+OPTION_CHOICES = {
+    "grasssanity": {
+        "no_termina_field": "Hors Plaine",
+        "grotto_and_cave_only": "Grottes",
+        "dungeon_only": "Donjons",
+    },
+}
+
 # option_id -> (nom affiché, description)
 OPTIONS = {
     # --- Options communes d'Archipelago ---
@@ -220,9 +230,9 @@ OPTIONS = {
     "grasssanity": ("Herbe (Grasssanity)",
         "Quelle herbe donne un objet mélangé.\n\n"
         "Normal : toute l'herbe du jeu.\n"
-        "Sauf Plaine de Termina : tout sauf la Plaine de Termina et ses grottes.\n"
-        "Grottes seulement : l'herbe des grottes et cavernes.\n"
-        "Donjons seulement : l'herbe des donjons."),
+        "Hors Plaine : tout sauf la Plaine de Termina et ses grottes.\n"
+        "Grottes : seulement l'herbe des grottes et cavernes.\n"
+        "Donjons : seulement l'herbe des donjons."),
     "potsanity": ("Jarres (Potsanity)",
         "Quelles jarres donnent un objet mélangé.\n\n"
         "Tous : toutes les jarres du jeu.\n"
@@ -324,5 +334,6 @@ def translate_options(options):
             if fr:
                 info["name"], info["description"] = fr
             if "choices" in info:
-                info["choice_names"] = {c: _choice_label(CHOICES[c]) for c in info["choices"] if c in CHOICES}
+                own = OPTION_CHOICES.get(option_id, {})
+                info["choice_names"] = {c: _choice_label(own.get(c) or CHOICES[c]) for c in info["choices"] if c in own or c in CHOICES}
     return {g: GROUPS.get(g, g) for g in options}
