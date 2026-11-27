@@ -1,5 +1,6 @@
 #include "recomputils.h"
 #include "recompconfig.h"
+#include "rando_lang.h"
 
 #include "apcommon.h"
 #include "import_menu.h"
@@ -229,10 +230,10 @@ void randoCreateImportMenu() {
 
     REPY_FN_SETUP_RANDO;
 
-    import_menu.header_label = recompui_create_label(import_menu.context, import_menu.header, "Importer des réglages", LABELSTYLE_LARGE);
+    import_menu.header_label = recompui_create_label(import_menu.context, import_menu.header, TR("Import Settings", "Importer des réglages"), LABELSTYLE_LARGE);
     recompui_set_text_align(import_menu.header_label, TEXT_ALIGN_CENTER);
 
-    import_menu.generate_button = recompui_create_button(import_menu.context, import_menu.header, "Générer", BUTTONSTYLE_PRIMARY);
+    import_menu.generate_button = recompui_create_button(import_menu.context, import_menu.header, TR("Generate", "Générer"), BUTTONSTYLE_PRIMARY);
     recompui_register_callback(import_menu.generate_button, generatePressed, NULL);
 
     import_menu.body = recompui_create_element(import_menu.context, import_menu.frame.container);
@@ -260,24 +261,37 @@ void randoCreateImportMenu() {
     recompui_set_border_top_width(import_menu.footer, 1.1f, UNIT_DP);
     recompui_set_border_top_color(import_menu.footer, &DividerColor);
 
-    REPY_FN_EVAL_CACHE_STR(
-        py_rando_create_yaml_import_hint,
-        // showing the whole folder path would overflow, so we shorten it here
-        // though, this may cause confusion if the user doesn't know this folder is in their OS's AppData equivalent (or portable location)
-        "f'Pour importer des réglages, place les fichiers .yaml dans :\\n~/mod_data/{recomp_data.recomp_mod_id}/solo_yamls'",
-        import_folder_hint
-    );
+    char* import_folder_hint;
+    if (rando_lang_fr()) {
+        REPY_FN_EVAL_CACHE_STR(
+            py_rando_create_yaml_import_hint_fr,
+            // showing the whole folder path would overflow, so we shorten it here
+            // though, this may cause confusion if the user doesn't know this folder is in their OS's AppData equivalent (or portable location)
+            "f'Pour importer des réglages, place les fichiers .yaml dans :\\n~/mod_data/{recomp_data.recomp_mod_id}/solo_yamls'",
+            import_folder_hint_fr
+        );
+        import_folder_hint = import_folder_hint_fr;
+    } else {
+        REPY_FN_EVAL_CACHE_STR(
+            py_rando_create_yaml_import_hint_en,
+            // showing the whole folder path would overflow, so we shorten it here
+            // though, this may cause confusion if the user doesn't know this folder is in their OS's AppData equivalent (or portable location)
+            "f'To import settings, place .yaml files in:\\n~/mod_data/{recomp_data.recomp_mod_id}/solo_yamls'",
+            import_folder_hint_en
+        );
+        import_folder_hint = import_folder_hint_en;
+    }
 
     import_menu.path_label = recompui_create_label(import_menu.context, import_menu.footer, import_folder_hint, LABELSTYLE_NORMAL);
     recompui_set_text_align(import_menu.path_label, TEXT_ALIGN_CENTER);
     recompui_set_margin_bottom(import_menu.path_label, 8.0f, UNIT_DP);
 
-    import_menu.refresh_button = recompui_create_button(import_menu.context, import_menu.footer, "Actualiser", BUTTONSTYLE_SECONDARY);
+    import_menu.refresh_button = recompui_create_button(import_menu.context, import_menu.footer, TR("Refresh", "Actualiser"), BUTTONSTYLE_SECONDARY);
     recompui_set_width(import_menu.refresh_button, 240.0f, UNIT_DP);
     recompui_set_text_align(import_menu.refresh_button, TEXT_ALIGN_CENTER);
     recompui_register_callback(import_menu.refresh_button, refreshPressed, NULL);
 
-    import_menu.back_button = recompui_create_button(import_menu.context, import_menu.frame.root, "Retour", BUTTONSTYLE_SECONDARY);
+    import_menu.back_button = recompui_create_button(import_menu.context, import_menu.frame.root, TR("Back", "Retour"), BUTTONSTYLE_SECONDARY);
     recompui_set_position(import_menu.back_button, POSITION_ABSOLUTE);
     recompui_set_left(import_menu.back_button, 64.0f, UNIT_DP);
     recompui_set_top(import_menu.back_button, 32.0f, UNIT_DP);

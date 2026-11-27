@@ -24,8 +24,18 @@
 - **Solo menu**: the *Start* button label was invisible (`DISPLAY_FLEX` on a button with a bare text node); it is now shown and right-aligned.
 
 ### Additions
-- **French interface**: menus, buttons and the 83 randomizer options (names, descriptions, choices, groups). Only displayed text changes: option ids and values written to the YAML are untouched. Translations live in `apworld/mm_recomp/rando_fr.py`.
-- **Mod settings**: *Lune* (normal moon or the dev branch's frog moon, normal by default) and *Couleur de l'herbe* (grass colouring follows the container setting, never coloured, or gold until collected).
+- **Language setting** (*Language / Langue*, English by default): French menus, buttons and the 84 randomizer options (names, descriptions, choices, groups). Only displayed text changes: option ids and values written to the YAML are untouched. Restart the game after changing it. Translations live in `apworld/mm_recomp/rando_fr.py`.
+- **Mod settings**: *Moon* (normal moon or the dev branch's frog moon, normal by default) and *Grass Colour* (grass colouring follows the container setting, never coloured, or gold until collected).
+- **Apworld manifest** (`archipelago.json`): required by Archipelago 0.7.0 and later; the apworld also loads on 0.6.4+ without the "missing manifest" error.
+
+### Multiworld with this fork
+
+1. Every Majora's Mask player makes a YAML: in the game, **Solo → New Session**, set the options, then **Export Yaml** (written to `mod_data/mm_recomp_rando/solo_yamls`). Players of other games make theirs as usual.
+2. The host installs [Archipelago](https://github.com/ArchipelagoMW/Archipelago/releases) 0.6.4 or newer, removes any old `mm_recomp.apworld` / `mm-recomp.apworld` from `lib/worlds` and `custom_worlds`, and installs the `mm_recomp.apworld` from [this fork's latest release](https://github.com/nelemm/MMRecompRando/releases/latest) (double-click it).
+3. The host puts every YAML in Archipelago's `Players` folder and runs **Generate** from the Archipelago Launcher, then uploads `output/AP_….zip` to [archipelago.gg/uploads](https://archipelago.gg/uploads) and creates a room (or runs **Host** from the Launcher).
+4. In the game, each player picks **Multiworld** and enters the room's address (e.g. `archipelago.gg:38281`), their player name and the password if any.
+
+All players must use this fork's mod and apworld: the upstream ones don't have the same locations.
 
 ### Building and dependencies
 
@@ -54,7 +64,8 @@ Fork de [RecompRando/MMRecompRando](https://github.com/RecompRando/MMRecompRando
 
 - **Sécurité (jeu en ligne)** : nom de fichier de sauvegarde borné et nettoyé (noms envoyés par le serveur), messages en jeu bornés, boucle de `sanitizeRandoText` corrigée (gel du jeu avec des noms de 256 octets ou plus), libellés du menu solo bornés.
 - **Bugs** : les conteneurs qui ne sont pas des checks redonnent leur contenu normal ; tampon de la lune grenouille sécurisé ; curseur de Better Double SoT bloqué pendant les dernières heures (choisir une heure y fait crasher le jeu) ; dialogue du singe ligoté qui ne se fermait plus avec un mod de traduction ; deux erreurs de logique de l'apworld corrigées (hiboux sans owlsanity, potion rouge sans shopsanity) ; compatibilité avec *Better Double SoT 1.0.0* et *Disable Draw Distance* ; bouton *Lancer* du menu solo visible.
-- **Ajouts** : interface et réglages du randomizer en français, réglages *Lune* et *Couleur de l'herbe* dans le menu Mods.
+- **Ajouts** : réglage *Language / Langue* (anglais par défaut) pour avoir les menus et les options du randomizer en français (redémarrer le jeu après le changement) ; réglages *Moon* et *Grass Colour* dans le menu Mods ; manifeste `archipelago.json` de l'apworld (exigé à partir d'Archipelago 0.7.0).
+- **Partie multi** : chaque joueur de Majora's Mask fait son YAML dans le jeu (**Solo → New Session → Export Yaml**) ; l'hôte installe Archipelago 0.6.4+ et le `mm_recomp.apworld` de la [dernière release de ce fork](https://github.com/nelemm/MMRecompRando/releases/latest), met les YAML dans `Players`, lance **Generate**, puis héberge le zip de `output` sur [archipelago.gg/uploads](https://archipelago.gg/uploads). Tous les joueurs doivent utiliser le mod et l'apworld de ce fork.
 
 ---
 

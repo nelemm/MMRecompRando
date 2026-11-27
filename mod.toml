@@ -73,6 +73,16 @@ data_reference_syms_files = [ "Zelda64RecompSyms/mm.us.rev1.datasyms.toml", "Zel
 additional_files = [ "thumb.dds" ]
 
 [[manifest.config_options]]
+id = "language"
+name = "Language / Langue"
+description = """Language of the randomizer menus (solo menu, settings, connection screen). Restart the game after changing it.
+
+Langue des menus du randomizer (menu solo, réglages, écran de connexion). Redémarre le jeu après l'avoir changée."""
+type = "Enum"
+options = [ "English", "Francais" ]
+default = "English"
+
+[[manifest.config_options]]
 id = "enable_notifications"
 name = "Display Notifications"
 description = "Sets if you want to be notified when you receive items."
@@ -119,28 +129,32 @@ default = "Enabled"
 
 [[manifest.config_options]]
 id = "moon_appearance"
-name = "Lune"
-description = """Apparence de la lune.
+name = "Moon"
+description = """What the moon looks like.
 
-Normale : la lune d'origine.
-Grenouille : la blague des développeurs du rando, une grenouille géante à la place de la lune.
+Normal: the original moon.
+Frog: the randomizer developers' joke, a giant frog instead of the moon.
 
-Le changement s'applique au prochain changement de zone."""
+The change applies on the next area change.
+
+(FR) Apparence de la lune : normale, ou une grenouille géante (blague des développeurs du rando). S'applique au prochain changement de zone."""
 type = "Enum"
-options = [ "Normale", "Grenouille" ]
-default = "Normale"
+options = [ "Normal", "Frog" ]
+default = "Normal"
 
 [[manifest.config_options]]
 id = "grass_appearance"
-name = "Couleur de l'herbe (Grasssanity)"
-description = """Choisit si l'herbe qui contient un check est colorée.
+name = "Grass Colour (Grasssanity)"
+description = """Whether grass that holds a check is coloured.
 
-Comme les conteneurs : suit le réglage « Container Appearance Matches Contents » ci-dessus.
-Normale : l'herbe garde toujours sa couleur d'origine.
-Doree si non prise : l'herbe est dorée tant que son check n'est pas pris, sans indiquer ce qu'elle contient."""
+Like containers: follows the "Container Appearance Matches Contents" setting above.
+Normal: grass always keeps its original colour.
+Gold until collected: grass is gold until its check is collected, without showing what it holds.
+
+(FR) Couleur de l'herbe qui contient un check : comme les conteneurs (suit le réglage ci-dessus), toujours normale, ou dorée tant que le check n'est pas pris."""
 type = "Enum"
-options = [ "Comme les conteneurs", "Normale", "Doree si non prise" ]
-default = "Comme les conteneurs"
+options = [ "Like containers", "Normal", "Gold until collected" ]
+default = "Like containers"
 
 [[manifest.config_options]]
 id = "show_soul_model"

@@ -1,0 +1,8 @@
+{
+	"game": "Majora's Mask Recompiled",
+	"minimum_ap_version": "0.6.4",
+	"world_version": "1.0.0",
+	"authors": ["RecompRando team", "nelemm (fr-fixes)"],
+	"version": 7,
+	"compatible_version": 7
+}

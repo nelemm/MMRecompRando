@@ -2,6 +2,7 @@
 #include "apconnect_menu.h"
 #include "mod_check_menu.h"
 #include "recompconfig.h"
+#include "rando_lang.h"
 #include "recomputils.h"
 #include "rando_glue.h"
 
@@ -67,7 +68,7 @@ void randoCreateAPConnectMenu() {
     rando_get_saved_apconnect(recomp_get_save_file_path(), &address, &player_name, &password);
 
     // Create a label for the server address.
-    connect_menu.server_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, "Adresse du serveur:port", LABELSTYLE_NORMAL);
+    connect_menu.server_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, TR("Server Address:Port", "Adresse du serveur:port"), LABELSTYLE_NORMAL);
     recompui_set_font_size(connect_menu.server_label, 30.0f, UNIT_DP);
 
     // Create a text input for the server address.
@@ -79,7 +80,7 @@ void randoCreateAPConnectMenu() {
     recompui_set_max_width(connect_menu.server_textinput, 100.0f, UNIT_PERCENT);
 
     // Create a label for the slotname.
-    connect_menu.slotname_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, "Nom du slot", LABELSTYLE_NORMAL);
+    connect_menu.slotname_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, TR("Slotname", "Nom du slot"), LABELSTYLE_NORMAL);
     recompui_set_font_size(connect_menu.slotname_label, 30.0f, UNIT_DP);
 
     // Create a text input for the slotname.
@@ -91,7 +92,7 @@ void randoCreateAPConnectMenu() {
     recompui_set_max_width(connect_menu.slot_textinput, 100.0f, UNIT_PERCENT);
 
     // Create a label for the password.
-    connect_menu.password_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, "Mot de passe", LABELSTYLE_NORMAL);
+    connect_menu.password_label = recompui_create_label(connect_menu.context, connect_menu.frame.container, TR("Password", "Mot de passe"), LABELSTYLE_NORMAL);
     recompui_set_font_size(connect_menu.password_label, 30.0f, UNIT_DP);
 
     // Create a text input for the password.
@@ -102,13 +103,13 @@ void randoCreateAPConnectMenu() {
     recompui_set_max_width(connect_menu.password_textinput, 100.0f, UNIT_PERCENT);
 
     // Create the connect button.
-    connect_menu.connect_button = recompui_create_button(connect_menu.context, connect_menu.frame.container, "Se connecter", BUTTONSTYLE_SECONDARY);
+    connect_menu.connect_button = recompui_create_button(connect_menu.context, connect_menu.frame.container, TR("Connect", "Se connecter"), BUTTONSTYLE_SECONDARY);
     recompui_set_text_align(connect_menu.connect_button, TEXT_ALIGN_CENTER);
     recompui_set_margin_top(connect_menu.connect_button, 70.0f, UNIT_DP);
     recompui_register_callback(connect_menu.connect_button, connectPressed, NULL);
 
     // Create the back button, parenting it to the root with absolute positioning.
-    connect_menu.back_button = recompui_create_button(connect_menu.context, connect_menu.frame.root, "Retour", BUTTONSTYLE_SECONDARY);
+    connect_menu.back_button = recompui_create_button(connect_menu.context, connect_menu.frame.root, TR("Back", "Retour"), BUTTONSTYLE_SECONDARY);
     recompui_set_position(connect_menu.back_button, POSITION_ABSOLUTE);
     recompui_set_left(connect_menu.back_button, 64.0f, UNIT_DP);
     recompui_set_top(connect_menu.back_button, 32.0f, UNIT_DP);

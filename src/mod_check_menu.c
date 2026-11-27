@@ -1,5 +1,6 @@
 #include "recomputils.h"
 #include "recompconfig.h"
+#include "rando_lang.h"
 
 #include "apcommon.h"
 #include "mod_check_menu.h"
@@ -53,7 +54,7 @@ void randoCreateModCheckMenu() {
     recompui_set_justify_content(mod_check_menu.frame.container, JUSTIFY_CONTENT_FLEX_START);
     recompui_set_padding(mod_check_menu.frame.container, 24.0f, UNIT_DP);
 
-    mod_check_menu.title = recompui_create_label(mod_check_menu.context, mod_check_menu.frame.container, "Mod(s) requis manquant(s)", LABELSTYLE_LARGE);
+    mod_check_menu.title = recompui_create_label(mod_check_menu.context, mod_check_menu.frame.container, TR("Missing Required Mod(s)", "Mod(s) requis manquant(s)"), LABELSTYLE_LARGE);
     recompui_set_text_align(mod_check_menu.title, TEXT_ALIGN_CENTER);
     recompui_set_margin_bottom(mod_check_menu.title, 16.0f, UNIT_DP);
     recompui_set_border_bottom_width(mod_check_menu.title, 1.1f, UNIT_DP);
@@ -72,7 +73,7 @@ void randoCreateModCheckMenu() {
     recompui_set_text_align(mod_check_menu.info_label, TEXT_ALIGN_CENTER);
     recompui_set_margin_bottom(mod_check_menu.info_label, 16.0f, UNIT_DP);
 
-    mod_check_menu.continue_button = recompui_create_button(mod_check_menu.context, mod_check_menu.frame.container, "Continuer sans ces mods", BUTTONSTYLE_SECONDARY);
+    mod_check_menu.continue_button = recompui_create_button(mod_check_menu.context, mod_check_menu.frame.container, TR("Continue without mods", "Continuer sans ces mods"), BUTTONSTYLE_SECONDARY);
     recompui_set_width(mod_check_menu.continue_button, 360.0f, UNIT_DP);
     recompui_set_text_align(mod_check_menu.continue_button, TEXT_ALIGN_CENTER);
     recompui_register_callback(mod_check_menu.continue_button, continuePressed, NULL);
